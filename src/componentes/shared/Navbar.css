@@ -1,0 +1,238 @@
+/* ====================================
+   NAVBAR MEJORADO - CON SISTEMA DE ROLES
+   ==================================== */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: var(--sura-azul-profundo);
+  color: var(--sura-blanco);
+  font-family: "Segoe UI", sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-sura-izquierda {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-sura-izquierda h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.logo-sura-navbar {
+  width: 50px;
+  height: auto;
+  border-radius: 8px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+
+.logo-sura-navbar:hover {
+  transform: scale(1.1);
+}
+
+/* Badge del rol */
+.badge-rol {
+  background: linear-gradient(135deg, var(--sura-aqua) 0%, #05A3C0 100%);
+  color: var(--sura-azul-profundo);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(5, 195, 222, 0.3);
+}
+
+/* Contenedor del menú */
+.contenedor-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Botón hamburguesa */
+.boton-menu {
+  background: transparent;
+  border: 2px solid var(--sura-blanco);
+  color: var(--sura-blanco);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.3rem;
+  transition: all 0.3s ease;
+  min-width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boton-menu:hover {
+  background: var(--sura-blanco);
+  color: var(--sura-azul-profundo);
+  transform: scale(1.05);
+}
+
+/* Overlay oscuro cuando el menú está abierto */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Menú lateral desplegable */
+.menu-lateral {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: var(--sura-azul-profundo);
+  border-radius: 12px;
+  min-width: 280px;
+  max-width: 90vw;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  z-index: 99;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Opciones del menú */
+.menu-paginas {
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--sura-blanco);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-paginas:last-child {
+  border-bottom: none;
+}
+
+.menu-paginas:hover {
+  background: var(--sura-aqua);
+  color: var(--sura-azul-profundo);
+  padding-left: 25px;
+}
+
+/* Sección de menú (para agrupar opciones) */
+.menu-seccion {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menu-titulo-seccion {
+  padding: 12px 20px 8px;
+  color: var(--sura-aqua);
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(5, 195, 222, 0.1);
+}
+
+/* Submenú (opciones anidadas) */
+.menu-sub {
+  padding-left: 35px;
+  font-size: 14px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.menu-sub:hover {
+  padding-left: 40px;
+}
+
+/* Opción de cerrar sesión */
+.salir-menu {
+  background: rgba(220, 53, 69, 0.1);
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.salir-menu:hover {
+  background: #dc3545;
+  color: var(--sura-blanco);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 12px 20px;
+  }
+
+  .navbar-sura-izquierda {
+    flex-wrap: wrap;
+  }
+
+  .navbar-sura-izquierda h3 {
+    font-size: 1.1rem;
+    flex-basis: 100%;
+  }
+
+  .badge-rol {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .menu-lateral {
+    min-width: 250px;
+    right: -10px;
+  }
+
+  .logo-sura-navbar {
+    width: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-lateral {
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .navbar-sura-izquierda h3 {
+    font-size: 1rem;
+  }
+}
