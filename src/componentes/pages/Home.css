@@ -3,7 +3,7 @@
    ==================================== */
 
 .home-container {
-  min-height: calc(100vh - 72px); /* 72px es la altura del navbar */
+  min-height: calc(100vh - 72px);
   padding: 40px 20px;
   background: linear-gradient(135deg, rgba(0, 61, 165, 0.05) 0%, rgba(0, 163, 224, 0.05) 100%);
 }
@@ -13,7 +13,7 @@
   margin: 0 auto;
 }
 
-/* Header de bienvenida */
+/* ===== HEADER ===== */
 .home-header {
   text-align: center;
   margin-bottom: 30px;
@@ -26,14 +26,8 @@
 }
 
 @keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .home-header h1 {
@@ -60,7 +54,7 @@
   box-shadow: 0 4px 12px rgba(5, 195, 222, 0.3);
 }
 
-/* Descripción */
+/* ===== DESCRIPCIÓN ===== */
 .home-descripcion {
   text-align: center;
   margin-bottom: 40px;
@@ -74,7 +68,7 @@
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 .home-descripcion p {
@@ -84,7 +78,7 @@
   line-height: 1.6;
 }
 
-/* Tarjetas de acceso rápido */
+/* ===== GRID DE TARJETAS ===== */
 .home-tarjetas {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -92,6 +86,7 @@
   margin-bottom: 40px;
 }
 
+/* ===== TARJETA BASE ===== */
 .tarjeta {
   padding: 30px;
   background: rgba(255, 255, 255, 0.95);
@@ -107,22 +102,20 @@
   animation-fill-mode: both;
 }
 
-.tarjeta:nth-child(1) { animation-delay: 0.1s; }
-.tarjeta:nth-child(2) { animation-delay: 0.2s; }
-.tarjeta:nth-child(3) { animation-delay: 0.3s; }
+/* Delays escalonados para la animación de entrada */
+.tarjeta:nth-child(1) { animation-delay: 0.05s; }
+.tarjeta:nth-child(2) { animation-delay: 0.10s; }
+.tarjeta:nth-child(3) { animation-delay: 0.15s; }
+.tarjeta:nth-child(4) { animation-delay: 0.20s; }
+.tarjeta:nth-child(5) { animation-delay: 0.25s; }
+.tarjeta:nth-child(6) { animation-delay: 0.30s; }
 
 @keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Efecto de brillo en tarjetas */
+/* Efecto brillo en hover */
 .tarjeta::before {
   content: '';
   position: absolute;
@@ -130,32 +123,37 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
   transition: left 0.5s;
 }
 
-.tarjeta:hover::before {
+.tarjeta:not(.tarjeta-proximamente):hover::before {
   left: 100%;
 }
 
-.tarjeta:hover {
+.tarjeta:not(.tarjeta-proximamente):hover {
   transform: translateY(-8px);
   box-shadow: 0 16px 48px rgba(0, 61, 165, 0.25);
 }
 
-/* Colores específicos por tarjeta */
-.tarjeta-azul:hover {
-  border-color: #003DA5;
+/* Bordes de color por variante */
+.tarjeta-azul:not(.tarjeta-proximamente):hover  { border-color: var(--sura-azul-medio, #003DA5); }
+.tarjeta-cyan:not(.tarjeta-proximamente):hover  { border-color: var(--sura-azul-cielo, #00A3E0); }
+.tarjeta-dorado:not(.tarjeta-proximamente):hover{ border-color: var(--sura-amarillo, #FDB913); }
+
+/* ===== TARJETA PRÓXIMAMENTE ===== */
+.tarjeta-proximamente {
+  opacity: 0.65;
+  cursor: default !important;
+  filter: grayscale(30%);
 }
 
-.tarjeta-cyan:hover {
-  border-color: #00A3E0;
+.tarjeta-proximamente:hover {
+  transform: none !important;
+  box-shadow: 0 8px 32px rgba(0, 61, 165, 0.15) !important;
 }
 
-.tarjeta-dorado:hover {
-  border-color: #FDB913;
-}
-
+/* ===== CONTENIDO DE TARJETA ===== */
 .tarjeta-icono {
   font-size: 48px;
   margin-bottom: 15px;
@@ -176,6 +174,7 @@
   line-height: 1.5;
 }
 
+/* ===== BADGES ===== */
 .badge-profesor {
   display: inline-block;
   background: linear-gradient(135deg, #FDB913 0%, #FFA000 100%);
@@ -185,9 +184,23 @@
   font-size: 11px;
   font-weight: bold;
   text-transform: uppercase;
-  margin-top: 10px;
+  margin-top: 8px;
+  margin-right: 6px;
 }
 
+.badge-proximamente {
+  display: inline-block;
+  background: linear-gradient(135deg, #aaa 0%, #888 100%);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* ===== FLECHA ===== */
 .tarjeta-flecha {
   position: absolute;
   bottom: 20px;
@@ -197,11 +210,11 @@
   transition: transform 0.3s ease;
 }
 
-.tarjeta:hover .tarjeta-flecha {
+.tarjeta:not(.tarjeta-proximamente):hover .tarjeta-flecha {
   transform: translateX(5px);
 }
 
-/* Mensaje informativo para estudiantes */
+/* ===== AVISO ESTUDIANTE ===== */
 .info-estudiante {
   display: flex;
   align-items: flex-start;
@@ -230,7 +243,7 @@
   color: var(--sura-azul-profundo);
 }
 
-/* Estadísticas */
+/* ===== ESTADÍSTICAS ===== */
 .home-estadisticas {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -256,7 +269,6 @@
 .estadistica-numero {
   font-size: 40px;
   margin-bottom: 10px;
-  filter: grayscale(10%);
 }
 
 .estadistica p {
@@ -266,47 +278,16 @@
   font-weight: 600;
 }
 
-/* Responsive */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .home-container {
-    padding: 20px 15px;
-  }
-
-  .home-header {
-    padding: 20px;
-  }
-
-  .home-header h1 {
-    font-size: 28px;
-  }
-
-  .home-rol {
-    font-size: 16px;
-  }
-
-  .badge-rol-home {
-    font-size: 12px;
-    padding: 5px 12px;
-  }
-
-  .home-descripcion p {
-    font-size: 14px;
-  }
-
-  .home-tarjetas {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .tarjeta {
-    padding: 25px;
-  }
-
-  .tarjeta h3 {
-    font-size: 20px;
-  }
-
-  .home-estadisticas {
-    grid-template-columns: 1fr;
-  }
+  .home-container { padding: 20px 15px; }
+  .home-header { padding: 20px; }
+  .home-header h1 { font-size: 28px; }
+  .home-rol { font-size: 16px; }
+  .badge-rol-home { font-size: 12px; padding: 5px 12px; }
+  .home-descripcion p { font-size: 14px; }
+  .home-tarjetas { grid-template-columns: 1fr; gap: 20px; }
+  .tarjeta { padding: 25px; }
+  .tarjeta h3 { font-size: 20px; }
+  .home-estadisticas { grid-template-columns: 1fr; }
 }

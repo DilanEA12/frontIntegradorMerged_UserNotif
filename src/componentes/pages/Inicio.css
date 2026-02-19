@@ -31,11 +31,13 @@
 
 @keyframes floatTiger {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-30px) rotate(5deg); }
+  50%       { transform: translateY(-30px) rotate(5deg); }
 }
 
+/* Tarjeta principal */
 .inicio-content {
-  max-width: 900px;
+  max-width: 1000px;
+  width: 100%;
   text-align: center;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
@@ -48,16 +50,11 @@
 }
 
 @keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(50px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Logo */
 .inicio-logo {
   width: 200px;
   height: auto;
@@ -68,9 +65,10 @@
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
+/* Títulos */
 .inicio-titulo {
   font-size: 42px;
   color: var(--sura-azul-profundo);
@@ -80,14 +78,8 @@
 }
 
 @keyframes slideInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .inicio-subtitulo {
@@ -102,12 +94,12 @@
   color: var(--sura-texto-principal);
   margin-bottom: 40px;
   line-height: 1.6;
-  max-width: 600px;
+  max-width: 650px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Botones */
+/* ===== BOTONES ===== */
 .inicio-botones {
   display: flex;
   gap: 20px;
@@ -150,16 +142,16 @@
   box-shadow: 0 8px 25px rgba(253, 185, 19, 0.4);
 }
 
-/* Características */
+/* ===== CARACTERÍSTICAS (grid de 6 módulos) ===== */
 .inicio-caracteristicas {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(3, 1fr);  /* 3 columnas en desktop */
+  gap: 24px;
   margin-top: 40px;
 }
 
 .caracteristica {
-  padding: 25px;
+  padding: 24px 20px;
   background: rgba(0, 163, 224, 0.05);
   border-radius: 16px;
   border: 2px solid rgba(0, 163, 224, 0.1);
@@ -174,29 +166,30 @@
 }
 
 .caracteristica-icono {
-  font-size: 48px;
-  margin-bottom: 15px;
-  filter: grayscale(20%);
+  font-size: 40px;
+  margin-bottom: 12px;
 }
 
 .caracteristica h3 {
-  font-size: 20px;
+  font-size: 17px;
   color: var(--sura-azul-profundo);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-weight: bold;
 }
 
 .caracteristica p {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--sura-texto-principal);
   margin: 0;
+  line-height: 1.5;
 }
 
-/* Footer */
+/* ===== FOOTER ===== */
 .inicio-footer {
   position: fixed;
   bottom: 0;
   width: 100%;
-  padding: 20px;
+  padding: 16px;
   text-align: center;
   color: white;
   font-size: 14px;
@@ -205,10 +198,16 @@
   z-index: 0;
 }
 
-/* Responsive */
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .inicio-caracteristicas {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablet */
+  }
+}
+
 @media (max-width: 768px) {
   .inicio-content {
-    padding: 40px 25px;
+    padding: 40px 20px;
   }
 
   .inicio-logo {
@@ -216,11 +215,11 @@
   }
 
   .inicio-titulo {
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .inicio-subtitulo {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .inicio-descripcion {
@@ -234,12 +233,12 @@
   }
 
   .inicio-caracteristicas {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: 1fr; /* 1 columna en móvil */
+    gap: 16px;
   }
 
   .inicio-container::before {
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
   }
 }

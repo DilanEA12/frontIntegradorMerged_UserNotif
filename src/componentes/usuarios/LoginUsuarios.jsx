@@ -1,71 +1,43 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./LoginUsuarios.css";
-import Swal from "sweetalert2";
-import logoSura from "./../../imagenes/logoSura.png";
+// ====================================
+// LOGIN USUARIOS - UNIFICADO
+// Usa usuarioService (sin fetch directo)
+// ====================================
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { usuarioService } from '../../services/usuarioService';
+import './LoginUsuarios.css';
+import logoSura from '../../imagenes/logoSura.png';
 
 function LoginUsuarios() {
-  const [login, setLogin] = useState({
-    correo: "",
-    contraseña: "",
-  });
-
+  const [login, setLogin] = useState({ correo: '', contraseña: '' });
+  const [cargando, setCargando] = useState(false);
   const navegacion = useNavigate();
 
   const capturarDatos = (e) => {
-    setLogin({
-      ...login,
-      [e.target.name]: e.target.value,
-    });
+    setLogin({ ...login, [e.target.name]: e.target.value });
   };
 
   const envioDatos = async (e) => {
     e.preventDefault();
 
     if (!login.correo || !login.contraseña) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Correo y contraseña obligatorios",
-      });
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Correo y contraseña obligatorios' });
       return;
     }
 
+    setCargando(true);
+
     try {
-      const respuesta = await fetch(
-        "http://localhost:8080/apisura8/v1/usuarios",
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        },
-      );
+      // Usamos el servicio en vez de fetch directo
+      const usuarioEncontrado = await usuarioService.login(login.correo, login.contraseña);
 
-      if (!respuesta.ok) {
-        throw new Error("Error al conectar con el servidor");
-      }
-
-      const usuarios = await respuesta.json();
-
-      const usuarioEncontrado = usuarios.find(
-        (usuario) =>
-          usuario.correo === login.correo &&
-          usuario.contraseña === login.contraseña,
-      );
-
-      if (!usuarioEncontrado) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Correo o contraseña incorrectos",
-        });
-        return;
-      }
-
-      localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
+      localStorage.setItem('usuario', JSON.stringify(usuarioEncontrado));
 
       Swal.fire({
-        icon: "success",
-        title: "Bienvenido",
+        icon: 'success',
+        title: 'Bienvenido',
         text: `Hola ${usuarioEncontrado.nombre}`,
         timer: 1500,
         showConfirmButton: false,
@@ -73,20 +45,24 @@ function LoginUsuarios() {
         scrollbarPadding: false,
       });
 
-      navegacion("/home");
+      navegacion('/home');
     } catch (err) {
+      const esCrendenciales = err.message === 'Correo o contraseña incorrectos';
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo conectar con el servidor",
+        icon: 'error',
+        title: 'Error',
+        text: esCrendenciales ? err.message : 'No se pudo conectar con el servidor',
       });
       console.error(err);
+    } finally {
+      setCargando(false);
     }
   };
 
   return (
     <div className="contenedor-login">
       <img src={logoSura} alt="Logo Sura" className="logo-sura-login" />
+
       <form className="login-formulario" onSubmit={envioDatos}>
         <h2>Iniciar sesión</h2>
 
@@ -94,6 +70,7 @@ function LoginUsuarios() {
           type="text"
           name="correo"
           placeholder="Correo"
+          value={login.correo}
           onChange={capturarDatos}
         />
 
@@ -101,12 +78,16 @@ function LoginUsuarios() {
           type="password"
           name="contraseña"
           placeholder="Contraseña"
+          value={login.contraseña}
           onChange={capturarDatos}
         />
 
-        <button type="submit">Entrar</button>
+        <button type="submit" disabled={cargando}>
+          {cargando ? 'Entrando...' : 'Entrar'}
+        </button>
+
         <p>
-          No tienes cuenta? <a href="/registro">Regístrate aquí</a>
+          ¿No tienes cuenta? <a href="/registro">Regístrate aquí</a>
         </p>
       </form>
     </div>

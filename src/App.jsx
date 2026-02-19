@@ -1,46 +1,63 @@
 // ====================================
-// APP.JSX UNIFICADO - SURA G8
+// APP.JSX - SISTEMA DE ROLES DEFINITIVO
+//
+// PROFESORES:  pueden VER, CREAR y EDITAR notificaciones
+// ESTUDIANTES: solo pueden VER notificaciones (solo lectura)
 // ====================================
-// Integración de USUARIOS + NOTIFICACIONES
-// Con sistema de roles (Profesor/Estudiante)
+
+// ====================================
+// APP.JSX - UNIFICADO
+// Incluye rutas actuales + placeholder para futuros módulos
+// Profesores / Notas / Matrícula / Reportes
+// ====================================
 
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// ===== COMPONENTES DE USUARIOS =====
+// ===== USUARIOS =====
 import LoginUsuarios from './componentes/usuarios/LoginUsuarios';
 import UsuarioFormulario from './componentes/usuarios/UsuarioFormulario';
 import ListaUsuarios from './componentes/usuarios/ListaUsuarios';
 
-// ===== COMPONENTES DE NOTIFICACIONES =====
+// ===== NOTIFICACIONES =====
 import FormularioNotificacion from './componentes/notificaciones/FormularioNotificacion';
 import ListaNotificaciones from './componentes/notificaciones/ListaNotificaciones';
 import EditarNotificacion from './componentes/notificaciones/EditarNotificacion';
 
-// ===== COMPONENTES COMPARTIDOS =====
+// ===== SHARED =====
 import Navbar from './componentes/shared/Navbar';
 
 // ===== PÁGINAS =====
 import Inicio from './componentes/pages/Inicio';
 import Home from './componentes/pages/Home';
 
-// ===== ESTILOS =====
+/*
+  PRÓXIMOS MÓDULOS — descomenta cuando estén listos:
+
+  import ListaProfesores from './componentes/profesores/ListaProfesores';
+  import FormularioProfesor from './componentes/profesores/FormularioProfesor';
+
+  import ListaNotas from './componentes/notas/ListaNotas';
+  import FormularioNota from './componentes/notas/FormularioNota';
+
+  import ListaMatricula from './componentes/matricula/ListaMatricula';
+  import FormularioMatricula from './componentes/matricula/FormularioMatricula';
+
+  import ReportesEstadisticos from './componentes/reportes/ReportesEstadisticos';
+*/
+
+// ===== ESTILOS GLOBALES =====
 import './App.css';
 import './componentes/shared/Colores.css';
 
 // ====================================
-// COMPONENTE DE RUTA PROTEGIDA
+// GUARDS DE RUTA
 // ====================================
-// Este componente protege las rutas que requieren autenticación
+
+/** Cualquier usuario autenticado */
 function RutaProtegida({ children }) {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
-  
-  if (!usuario) {
-    // Si no hay usuario logueado, redirige al login
-    return <Navigate to="/login" replace />;
-  }
-  
-  // Si hay usuario, muestra el contenido
+  if (!usuario) return <Navigate to="/login" replace />;
   return (
     <>
       <Navbar />
@@ -49,23 +66,11 @@ function RutaProtegida({ children }) {
   );
 }
 
-// ====================================
-// COMPONENTE DE RUTA SOLO PARA PROFESORES
-// ====================================
-// Solo los profesores pueden crear/editar notificaciones
+/** Solo rol Profesor */
 function RutaSoloProfesor({ children }) {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
-  
-  if (!usuario) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (usuario.rol !== 'Profesor') {
-    // Si no es profesor, redirige a home con mensaje
-    alert('⚠️ Solo los profesores pueden acceder a esta sección');
-    return <Navigate to="/home" replace />;
-  }
-  
+  if (!usuario) return <Navigate to="/login" replace />;
+  if (usuario.rol !== 'Profesor') return <Navigate to="/home" replace />;
   return (
     <>
       <Navbar />
@@ -80,69 +85,54 @@ function RutaSoloProfesor({ children }) {
 function App() {
   return (
     <BrowserRouter>
-      <div className="App">
-        <Routes>
-          {/* ===== RUTAS PÚBLICAS ===== */}
-          <Route path="/" element={<Inicio />} />
-          <Route path="/login" element={<LoginUsuarios />} />
-          <Route path="/registro" element={<UsuarioFormulario />} />
-          
-          {/* ===== RUTAS PROTEGIDAS (requieren login) ===== */}
-          <Route 
-            path="/home" 
-            element={
-              <RutaProtegida>
-                <Home />
-              </RutaProtegida>
-            } 
-          />
-          
-          {/* ===== MÓDULO: USUARIOS ===== */}
-          <Route 
-            path="/usuarios" 
-            element={
-              <RutaProtegida>
-                <ListaUsuarios />
-              </RutaProtegida>
-            } 
-          />
-          
-          {/* ===== MÓDULO: NOTIFICACIONES ===== */}
-          {/* Ver notificaciones - Todos pueden ver */}
-          <Route 
-            path="/notificaciones" 
-            element={
-              <RutaProtegida>
-                <ListaNotificaciones />
-              </RutaProtegida>
-            } 
-          />
-          
-          {/* Crear notificación - SOLO PROFESORES */}
-          <Route 
-            path="/notificaciones/crear" 
-            element={
-              <RutaSoloProfesor>
-                <FormularioNotificacion />
-              </RutaSoloProfesor>
-            } 
-          />
-          
-          {/* Editar notificación - SOLO PROFESORES */}
-          <Route 
-            path="/notificaciones/editar/:id" 
-            element={
-              <RutaSoloProfesor>
-                <EditarNotificacion />
-              </RutaSoloProfesor>
-            } 
-          />
-          
-          {/* ===== RUTA POR DEFECTO ===== */}
-          {/* Cualquier ruta no definida redirige al inicio */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+      <Routes>
+
+        {/* ===== RUTAS PÚBLICAS ===== */}
+        <Route path="/" element={<Inicio />} />
+        <Route path="/login" element={<LoginUsuarios />} />
+        <Route path="/registro" element={<UsuarioFormulario />} />
+
+        {/* ===== HOME ===== */}
+        <Route path="/home" element={<RutaProtegida><Home /></RutaProtegida>} />
+
+        {/* ===== MÓDULO: USUARIOS ===== */}
+        <Route path="/usuarios" element={<RutaProtegida><ListaUsuarios /></RutaProtegida>} />
+
+        {/* ===== MÓDULO: NOTIFICACIONES ===== */}
+        <Route path="/notificaciones" element={<RutaProtegida><ListaNotificaciones /></RutaProtegida>} />
+        <Route path="/notificaciones/crear" element={<RutaSoloProfesor><FormularioNotificacion /></RutaSoloProfesor>} />
+        <Route path="/notificaciones/editar/:id" element={<RutaSoloProfesor><EditarNotificacion /></RutaSoloProfesor>} />
+
+        {/* ===== MÓDULO: PROFESORES (próximo) ===== */}
+        {/*
+        <Route path="/profesores" element={<RutaProtegida><ListaProfesores /></RutaProtegida>} />
+        <Route path="/profesores/crear" element={<RutaSoloProfesor><FormularioProfesor /></RutaSoloProfesor>} />
+        <Route path="/profesores/editar/:id" element={<RutaSoloProfesor><FormularioProfesor /></RutaSoloProfesor>} />
+        */}
+
+        {/* ===== MÓDULO: NOTAS (próximo) ===== */}
+        {/*
+        <Route path="/notas" element={<RutaProtegida><ListaNotas /></RutaProtegida>} />
+        <Route path="/notas/crear" element={<RutaSoloProfesor><FormularioNota /></RutaSoloProfesor>} />
+        <Route path="/notas/editar/:id" element={<RutaSoloProfesor><FormularioNota /></RutaSoloProfesor>} />
+        */}
+
+        {/* ===== MÓDULO: MATRÍCULA (próximo) ===== */}
+        {/*
+        <Route path="/matricula" element={<RutaProtegida><ListaMatricula /></RutaProtegida>} />
+        <Route path="/matricula/crear" element={<RutaSoloProfesor><FormularioMatricula /></RutaSoloProfesor>} />
+        <Route path="/matricula/editar/:id" element={<RutaSoloProfesor><FormularioMatricula /></RutaSoloProfesor>} />
+        */}
+
+        {/* ===== MÓDULO: REPORTES (próximo - solo profesores) ===== */}
+        {/*
+        <Route path="/reportes" element={<RutaSoloProfesor><ReportesEstadisticos /></RutaSoloProfesor>} />
+        */}
+
+        {/* ===== FALLBACK ===== */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
+      </Routes>
     </BrowserRouter>
   );
 }

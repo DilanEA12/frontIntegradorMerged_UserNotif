@@ -1,5 +1,6 @@
 // ====================================
 // PÁGINA HOME - DASHBOARD PRINCIPAL
+// Sistema de roles: Profesor / Estudiante
 // ====================================
 
 import React from 'react';
@@ -11,43 +12,106 @@ function Home() {
   const usuario = JSON.parse(localStorage.getItem('usuario'));
   const esProfesor = usuario?.rol === 'Profesor';
 
-  // Tarjetas de acceso rápido
+  // ====================================
+  // TARJETAS DE ACCESO RÁPIDO
+  // disponible: si aparece en el dashboard
+  // soloProfesor: muestra badge y restringe acceso
+  // proximamente: módulo aún no implementado
+  // ====================================
   const tarjetas = [
+    // ===== MÓDULO ACTIVO: USUARIOS =====
     {
       titulo: 'Usuarios',
-      descripcion: 'Ver lista de usuarios registrados',
+      descripcion: 'Ver lista de usuarios registrados en el sistema.',
       icono: '👥',
       ruta: '/usuarios',
       color: 'azul',
-      disponible: true
+      disponible: true,
+      soloProfesor: false,
+      proximamente: false,
     },
+
+    // ===== MÓDULO ACTIVO: NOTIFICACIONES =====
     {
       titulo: 'Ver Notificaciones',
-      descripcion: 'Consultar notificaciones recibidas',
+      descripcion: 'Consultar notificaciones recibidas.',
       icono: '📧',
       ruta: '/notificaciones',
       color: 'cyan',
-      disponible: true
+      disponible: true,
+      soloProfesor: false,
+      proximamente: false,
     },
     {
       titulo: 'Nueva Notificación',
-      descripcion: 'Crear y enviar notificación',
+      descripcion: 'Crear y enviar una notificación a usuarios.',
       icono: '✏️',
       ruta: '/notificaciones/crear',
       color: 'dorado',
-      disponible: esProfesor, // Solo para profesores
-      soloProfesor: true
-    }
+      disponible: esProfesor,   // ← Solo profesores ven esta tarjeta
+      soloProfesor: true,
+      proximamente: false,
+    },
+
+    // ===== MÓDULO PRÓXIMO: PROFESORES =====
+    {
+      titulo: 'Profesores',
+      descripcion: 'Gestionar información de profesores del sistema.',
+      icono: '🎓',
+      ruta: '/profesores',
+      color: 'azul',
+      disponible: true,
+      soloProfesor: false,
+      proximamente: true,
+    },
+
+    // ===== MÓDULO PRÓXIMO: NOTAS =====
+    {
+      titulo: 'Notas',
+      descripcion: 'Consultar y gestionar calificaciones de estudiantes.',
+      icono: '📝',
+      ruta: '/notas',
+      color: 'cyan',
+      disponible: true,
+      soloProfesor: false,
+      proximamente: true,
+    },
+
+    // ===== MÓDULO PRÓXIMO: MATRÍCULA =====
+    {
+      titulo: 'Matrícula',
+      descripcion: 'Administrar matrículas y cursos del período.',
+      icono: '🏫',
+      ruta: '/matricula',
+      color: 'dorado',
+      disponible: true,
+      soloProfesor: false,
+      proximamente: true,
+    },
+
+    // ===== MÓDULO PRÓXIMO: REPORTES (solo profesor) =====
+    {
+      titulo: 'Reportes Estadísticos',
+      descripcion: 'Visualizar estadísticas y reportes del sistema.',
+      icono: '📊',
+      ruta: '/reportes',
+      color: 'azul',
+      disponible: esProfesor,   // ← Solo profesores ven esta tarjeta
+      soloProfesor: true,
+      proximamente: true,
+    },
   ];
 
-  const irA = (ruta) => {
-    navigate(ruta);
+  const irA = (tarjeta) => {
+    if (tarjeta.proximamente) return; // no navegar si aún no está listo
+    navigate(tarjeta.ruta);
   };
 
   return (
     <div className="home-container">
       <div className="home-content">
-        {/* Encabezado de bienvenida */}
+
+        {/* ===== ENCABEZADO ===== */}
         <div className="home-header">
           <h1>¡Bienvenido, {usuario?.nombre}! 👋</h1>
           <p className="home-rol">
@@ -55,54 +119,59 @@ function Home() {
           </p>
         </div>
 
-        {/* Descripción */}
+        {/* ===== DESCRIPCIÓN SEGÚN ROL ===== */}
         <div className="home-descripcion">
           <p>
-            {esProfesor 
-              ? 'Como profesor, tienes acceso completo para gestionar usuarios y notificaciones.'
-              : 'Puedes consultar usuarios y ver las notificaciones que te han enviado.'
-            }
+            {esProfesor
+              ? 'Como profesor, tienes acceso completo para gestionar usuarios, notificaciones, notas, matrículas y reportes.'
+              : 'Como estudiante, puedes consultar usuarios, ver las notificaciones que te han enviado, tus notas y matrícula.'}
           </p>
         </div>
 
-        {/* Tarjetas de acceso rápido */}
+        {/* ===== TARJETAS DE ACCESO RÁPIDO ===== */}
         <div className="home-tarjetas">
           {tarjetas.map((tarjeta, index) => {
-            // Si la tarjeta no está disponible, no la mostramos
             if (!tarjeta.disponible) return null;
-            
+
             return (
               <div
                 key={index}
-                className={`tarjeta tarjeta-${tarjeta.color}`}
-                onClick={() => irA(tarjeta.ruta)}
+                className={`tarjeta tarjeta-${tarjeta.color} ${tarjeta.proximamente ? 'tarjeta-proximamente' : ''}`}
+                onClick={() => irA(tarjeta)}
+                style={{ cursor: tarjeta.proximamente ? 'default' : 'pointer' }}
               >
                 <div className="tarjeta-icono">{tarjeta.icono}</div>
                 <h3>{tarjeta.titulo}</h3>
                 <p>{tarjeta.descripcion}</p>
-                
+
                 {tarjeta.soloProfesor && (
                   <span className="badge-profesor">Solo Profesores</span>
                 )}
-                
-                <div className="tarjeta-flecha">→</div>
+
+                {tarjeta.proximamente && (
+                  <span className="badge-proximamente">Próximamente</span>
+                )}
+
+                {!tarjeta.proximamente && (
+                  <div className="tarjeta-flecha">→</div>
+                )}
               </div>
             );
           })}
         </div>
 
-        {/* Mensaje para estudiantes */}
+        {/* ===== AVISO PARA ESTUDIANTES ===== */}
         {!esProfesor && (
           <div className="info-estudiante">
             <div className="info-icono">ℹ️</div>
             <p>
-              <strong>Nota:</strong> Como estudiante, puedes ver notificaciones pero no crearlas. 
+              <strong>Nota:</strong> Como estudiante, puedes ver notificaciones pero no crearlas ni editarlas.
               Si necesitas enviar una notificación, contacta a tu profesor.
             </p>
           </div>
         )}
 
-        {/* Estadísticas rápidas (opcional) */}
+        {/* ===== ESTADÍSTICAS / ICONOS INFORMATIVOS ===== */}
         <div className="home-estadisticas">
           <div className="estadistica">
             <div className="estadistica-numero">🎯</div>
@@ -110,13 +179,14 @@ function Home() {
           </div>
           <div className="estadistica">
             <div className="estadistica-numero">🔐</div>
-            <p>Acceso Seguro</p>
+            <p>Acceso Seguro por Roles</p>
           </div>
           <div className="estadistica">
             <div className="estadistica-numero">⚡</div>
             <p>Tiempo Real</p>
           </div>
         </div>
+
       </div>
     </div>
   );

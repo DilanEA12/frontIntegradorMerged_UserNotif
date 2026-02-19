@@ -1,97 +1,80 @@
-import { useState } from "react";
-import "../usuarios/UsuarioFormulario.css";
-import Swal from "sweetalert2";
-import logoSura from "./../../imagenes/logoSura.png";
+// ====================================
+// FORMULARIO USUARIO - UNIFICADO
+// Usa usuarioService (sin fetch directo)
+// Ruta CSS corregida
+// ====================================
+
+import { useState } from 'react';
+import Swal from 'sweetalert2';
+import { usuarioService } from '../../services/usuarioService';
+import './UsuarioFormulario.css'; // ✅ Ruta corregida (era '../usuarios/UsuarioFormulario.css')
+import logoSura from '../../imagenes/logoSura.png';
 
 function UsuarioFormulario() {
   const [usuario, setUsuario] = useState({
-    nombre: "",
-    correo: "",
-    contraseña: "",
-    rol: "",
-    telefono: "",
+    nombre: '',
+    correo: '',
+    contraseña: '',
+    rol: '',
+    telefono: '',
   });
 
+  const [error, setError] = useState('');
+  const [cargando, setCargando] = useState(false);
+
   const capturarDatos = (e) => {
-    setUsuario({
-      ...usuario,
-      [e.target.name]: e.target.value,
-    });
+    setUsuario({ ...usuario, [e.target.name]: e.target.value });
   };
 
-  const [error, setError] = useState("");
-
-  const validarCorreo = (correo) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-  };
-
-  const validarTelefono = (telefono) => {
-    return /^[0-9]{7,10}$/.test(telefono);
-  };
+  const validarCorreo = (correo) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+  const validarTelefono = (tel) => /^[0-9]{7,10}$/.test(tel);
 
   const envioDatos = async (e) => {
     e.preventDefault();
 
-    if (
-      !usuario.nombre ||
-      !usuario.correo ||
-      !usuario.contraseña ||
-      !usuario.rol
-    ) {
-      setError("Todos los campos obligatorios deben estar llenos");
+    // Validaciones
+    if (!usuario.nombre || !usuario.correo || !usuario.contraseña || !usuario.rol) {
+      setError('Todos los campos obligatorios deben estar llenos');
       return;
     }
-
     if (!validarCorreo(usuario.correo)) {
-      setError("El correo no es válido");
+      setError('El correo no es válido');
       return;
     }
-
     if (usuario.telefono && !validarTelefono(usuario.telefono)) {
-      setError("El teléfono solo debe contener números (7 a 10 dígitos)");
+      setError('El teléfono solo debe contener números (7 a 10 dígitos)');
       return;
     }
-
     if (usuario.contraseña.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+      setError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
 
-    setError("");
+    setError('');
+    setCargando(true);
 
-    const respuesta = await fetch("http://localhost:8080/apisura8/v1/usuarios", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(usuario),
-    });
+    try {
+      // Usamos el servicio en vez de fetch directo
+      await usuarioService.crear(usuario);
 
-    if (!respuesta.ok) {
-      const mensajeError = await respuesta.text();
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: mensajeError || "No se pudo crear el usuario",
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Usuario creado correctamente',
+        timer: 2000,
+        showConfirmButton: false,
       });
-      return;
+
+      setUsuario({ nombre: '', correo: '', contraseña: '', rol: '', telefono: '' });
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: err.message || 'No se pudo crear el usuario',
+      });
+    } finally {
+      setCargando(false);
     }
-
-    Swal.fire({
-      icon: "success",
-      title: "¡Éxito!",
-      text: "Usuario creado correctamente",
-      timer: 2000,
-      showConfirmButton: false,
-    });
-
-    setUsuario({
-      nombre: "",
-      correo: "",
-      contraseña: "",
-      rol: "",
-      telefono: "",
-    });
   };
 
   return (
@@ -99,6 +82,8 @@ function UsuarioFormulario() {
       <img src={logoSura} alt="Logo Sura" className="logo-sura-formulario" />
 
       <form onSubmit={envioDatos} className="usuario-formulario">
+        <h2>Registro de usuario</h2>
+
         <input
           type="text"
           name="nombre"
@@ -128,18 +113,19 @@ function UsuarioFormulario() {
         <input
           type="text"
           name="telefono"
-          placeholder="Teléfono"
+          placeholder="Teléfono (opcional)"
           value={usuario.telefono}
           onChange={capturarDatos}
         />
 
         {error && <p className="error-mensaje">{error}</p>}
 
-        <button type="submit" disabled={!usuario.rol}>
-          Guardar
+        <button type="submit" disabled={!usuario.rol || cargando}>
+          {cargando ? 'Guardando...' : 'Guardar'}
         </button>
+
         <p>
-          Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
+          ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
         </p>
       </form>
     </div>
